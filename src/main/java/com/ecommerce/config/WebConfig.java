@@ -10,8 +10,6 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.Arrays;
-
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
@@ -19,43 +17,21 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public CorsFilter corsFilter() {
         logger.info("Initializing CORS filter");
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
         
-        String[] allowedOrigins = {
-            "http://localhost:3000",
-            "https://www.ganimport.com.ar",
-            "https://ganimport.com.ar"
-        };
-        corsConfiguration.setAllowedOrigins(Arrays.asList(allowedOrigins));
-        logger.info("Configured allowed origins: {}", Arrays.toString(allowedOrigins));
+        // Allow all origins temporarily for debugging
+        config.addAllowedOrigin("*");
+        config.setAllowCredentials(false); // Debe ser false cuando allowedOrigin es "*"
         
-        corsConfiguration.setAllowedHeaders(Arrays.asList(
-            "Origin",
-            "Access-Control-Allow-Origin",
-            "Content-Type",
-            "Accept",
-            "Authorization",
-            "Origin, Accept",
-            "X-Requested-With",
-            "Access-Control-Request-Method",
-            "Access-Control-Request-Headers"
-        ));
-        corsConfiguration.setExposedHeaders(Arrays.asList(
-            "Origin",
-            "Content-Type",
-            "Accept",
-            "Authorization",
-            "Access-Control-Allow-Origin",
-            "Access-Control-Allow-Credentials"
-        ));
-        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        config.addExposedHeader("*");
         
-        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+        source.registerCorsConfiguration("/**", config);
+        logger.info("CORS configuration completed");
         
-        logger.info("CORS filter configuration completed");
-        return new CorsFilter(urlBasedCorsConfigurationSource);
+        return new CorsFilter(source);
     }
 
     @Override
