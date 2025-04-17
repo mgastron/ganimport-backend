@@ -1,5 +1,7 @@
 package com.ecommerce.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -12,16 +14,22 @@ import java.util.Arrays;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+    private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
 
     @Bean
     public CorsFilter corsFilter() {
+        logger.info("Initializing CORS filter");
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.setAllowedOrigins(Arrays.asList(
+        
+        String[] allowedOrigins = {
             "http://localhost:3000",
             "https://www.ganimport.com.ar",
             "https://ganimport.com.ar"
-        ));
+        };
+        corsConfiguration.setAllowedOrigins(Arrays.asList(allowedOrigins));
+        logger.info("Configured allowed origins: {}", Arrays.toString(allowedOrigins));
+        
         corsConfiguration.setAllowedHeaders(Arrays.asList(
             "Origin",
             "Access-Control-Allow-Origin",
@@ -46,6 +54,7 @@ public class WebConfig implements WebMvcConfigurer {
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
         
+        logger.info("CORS filter configuration completed");
         return new CorsFilter(urlBasedCorsConfigurationSource);
     }
 
