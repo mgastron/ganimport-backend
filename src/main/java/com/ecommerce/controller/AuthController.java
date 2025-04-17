@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -45,6 +45,7 @@ public class AuthController {
             
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            logger.error("Authentication failed: ", e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("error", "Credenciales inválidas"));
         }
