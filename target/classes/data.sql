@@ -1,2 +1,0 @@
-INSERT INTO users (username, password, is_admin, email) VALUES ('admin', '1234', true, null);
-INSERT INTO users (username, password, is_admin, email) VALUES ('usuario1', '1234', false, 'miverdadyjusticia@gmail.com'); 
