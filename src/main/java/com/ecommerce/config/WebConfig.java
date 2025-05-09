@@ -10,6 +10,8 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.Arrays;
+
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
@@ -20,16 +22,27 @@ public class WebConfig implements WebMvcConfigurer {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         
-        // Allow all origins temporarily for debugging
-        config.addAllowedOrigin("*");
-        config.setAllowCredentials(false); // Debe ser false cuando allowedOrigin es "*"
+        // Permitir orígenes específicos - no usar "*" cuando se usan credenciales
+        config.addAllowedOrigin("https://www.ganimport.com.ar");
+        config.addAllowedOrigin("http://localhost:3000");
+        config.setAllowCredentials(true);
         
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        config.addExposedHeader("*");
+        config.addAllowedHeader("Authorization");
+        config.addAllowedHeader("Content-Type");
+        config.addAllowedHeader("X-Auth-Token");
+        config.addAllowedHeader("X-Username");
+        
+        config.addAllowedMethod("GET");
+        config.addAllowedMethod("POST");
+        config.addAllowedMethod("PUT");
+        config.addAllowedMethod("DELETE");
+        config.addAllowedMethod("OPTIONS");
+        
+        config.addExposedHeader("X-Auth-Token");
+        config.setMaxAge(3600L);
         
         source.registerCorsConfiguration("/**", config);
-        logger.info("CORS configuration completed");
+        logger.info("CORS configuration completed with specific origins and credentials enabled");
         
         return new CorsFilter(source);
     }

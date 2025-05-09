@@ -43,11 +43,17 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*")); // Permitir todos los orígenes
+        // Permitir dominios específicos en lugar de "*"
+        configuration.setAllowedOrigins(List.of(
+            "https://www.ganimport.com.ar", 
+            "http://localhost:3000"
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
-        configuration.setExposedHeaders(List.of("x-auth-token"));
-        configuration.setAllowCredentials(false);
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Auth-Token", "X-Username"));
+        configuration.setExposedHeaders(List.of("X-Auth-Token"));
+        // Permitir credenciales
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L); // 1 hora de caché para preflight
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
