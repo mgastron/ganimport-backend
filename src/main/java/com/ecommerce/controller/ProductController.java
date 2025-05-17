@@ -12,7 +12,8 @@ import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/api/products")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"https://www.ganimport.com.ar", "https://ganimport.vercel.app", "http://localhost:3000"}, 
+             allowCredentials = "true")
 public class ProductController {
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
