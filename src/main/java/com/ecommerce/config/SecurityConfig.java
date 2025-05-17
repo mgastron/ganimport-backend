@@ -33,6 +33,10 @@ public class SecurityConfig {
                     .anyRequest().authenticated()
             )
             .addFilterBefore(
+                new HeaderAuthenticationFilter(),
+                UsernamePasswordAuthenticationFilter.class
+            )
+            .addFilterBefore(
                 new AuthenticationFilter(),
                 UsernamePasswordAuthenticationFilter.class
             );
@@ -46,11 +50,12 @@ public class SecurityConfig {
         // Permitir dominios específicos en lugar de "*"
         configuration.setAllowedOrigins(List.of(
             "https://www.ganimport.com.ar", 
+            "https://ganimport.vercel.app",
             "http://localhost:3000"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Auth-Token", "X-Username"));
-        configuration.setExposedHeaders(List.of("X-Auth-Token"));
+        configuration.setExposedHeaders(List.of("X-Auth-Token", "X-Username"));
         // Permitir credenciales
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L); // 1 hora de caché para preflight
