@@ -18,13 +18,16 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public CorsFilter corsFilter() {
-        logger.info("Initializing CORS filter");
+        logger.info("Inicializando CorsFilter con configuración mejorada");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         
         // Permitir orígenes específicos - no usar "*" cuando se usan credenciales
         config.addAllowedOrigin("https://www.ganimport.com.ar");
+        config.addAllowedOrigin("https://ganimport.vercel.app");
         config.addAllowedOrigin("http://localhost:3000");
+        logger.info("Orígenes CORS configurados: www.ganimport.com.ar, ganimport.vercel.app, localhost:3000");
+        
         config.setAllowCredentials(true);
         
         config.addAllowedHeader("Authorization");
@@ -39,10 +42,11 @@ public class WebConfig implements WebMvcConfigurer {
         config.addAllowedMethod("OPTIONS");
         
         config.addExposedHeader("X-Auth-Token");
+        config.addExposedHeader("X-Username");
         config.setMaxAge(3600L);
         
         source.registerCorsConfiguration("/**", config);
-        logger.info("CORS configuration completed with specific origins and credentials enabled");
+        logger.info("Configuración CORS completada con orígenes específicos y credenciales habilitadas");
         
         return new CorsFilter(source);
     }

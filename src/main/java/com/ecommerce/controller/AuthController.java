@@ -19,7 +19,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*", allowedHeaders = "*", allowCredentials = "true")
+@CrossOrigin(origins = {"https://www.ganimport.com.ar", "https://ganimport.vercel.app", "http://localhost:3000"}, 
+             allowedHeaders = "*", 
+             allowCredentials = "true")
 public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
