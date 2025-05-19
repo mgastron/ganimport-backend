@@ -47,4 +47,9 @@ public class AdminController {
             return ResponseEntity.badRequest().body("Estado inválido");
         }
     }
+
+    @GetMapping("/ping")
+    public String ping() {
+        return "Backend actualizado: 2024-06-10 18:30 - v1";
+    }
 } 
