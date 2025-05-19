@@ -13,11 +13,15 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
 import java.util.stream.Collectors;
+import java.util.UUID;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"https://www.ganimport.com.ar", "https://ganimport.vercel.app", "http://localhost:3000"}, 
+             allowedHeaders = "*", 
+             allowCredentials = "true")
 public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -26,7 +30,7 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response) {
         logger.info("Login attempt received from origin: {}", request.getHeader("Origin"));
         logger.info("Request headers: {}", Collections.list(request.getHeaderNames())
             .stream()
@@ -38,12 +42,22 @@ public class AuthController {
         try {
             User user = userService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
             
-            Map<String, Object> response = new HashMap<>();
-            response.put("token", "token-example");
-            response.put("isAdmin", user.isAdmin());
-            response.put("username", user.getUsername());
+            // Generar un token simple basado en UUID (en producción real usaríamos JWT)
+            String token = UUID.randomUUID().toString();
             
-            return ResponseEntity.ok(response);
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("token", token);
+            responseData.put("isAdmin", user.isAdmin());
+            responseData.put("username", user.getUsername());
+            responseData.put("message", "Inicio de sesión exitoso");
+            
+            // Establecer headers de respuesta
+            response.setHeader("X-Auth-Token", token);
+            response.setHeader("X-Username", user.getUsername());
+            response.setHeader("Access-Control-Expose-Headers", "X-Auth-Token, X-Username");
+            
+            logger.info("Login successful for user: {}", user.getUsername());
+            return ResponseEntity.ok(responseData);
         } catch (Exception e) {
             logger.error("Authentication failed: ", e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -59,5 +73,22 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+    
+    // Endpoint para verificar estado de autenticación
+    @GetMapping("/verify")
+    public ResponseEntity<?> verifyAuthentication(HttpServletRequest request) {
+        String username = request.getHeader("X-Username");
+        logger.info("Verificando autenticación para: {}", username);
+        
+        if (username != null && !username.isEmpty()) {
+            return ResponseEntity.ok(Map.of(
+                "authenticated", true,
+                "username", username
+            ));
+        }
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(Map.of("authenticated", false));
     }
 }
