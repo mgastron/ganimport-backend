@@ -13,7 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "https://ganimport.vercel.app", "https://www.ganimport.com.ar"})
 public class AdminController {
 
     @Autowired
