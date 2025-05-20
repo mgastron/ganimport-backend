@@ -24,7 +24,14 @@ public class AdminController {
 
     @PostMapping("/users")
     public ResponseEntity<?> createUser(@RequestBody User user) {
+        System.out.println("[LOG] POST /api/admin/users - Intento de crear usuario: " + user.getUsername());
         return ResponseEntity.ok(userService.createUser(user));
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<?> getUsersLog() {
+        System.out.println("[LOG] GET /api/admin/users - Acceso detectado");
+        return ResponseEntity.status(403).body("GET no permitido en /api/admin/users");
     }
 
     @GetMapping("/orders")
@@ -50,6 +57,7 @@ public class AdminController {
 
     @GetMapping("/ping")
     public String ping() {
+        System.out.println("[LOG] /api/admin/ping accedido");
         return "Backend actualizado: 2024-06-10 18:30 - v1";
     }
 } 
