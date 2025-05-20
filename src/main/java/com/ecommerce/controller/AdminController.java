@@ -25,6 +25,11 @@ public class AdminController {
     @PostMapping("/users")
     public ResponseEntity<?> createUser(@RequestBody User user) {
         System.out.println("[LOG] POST /api/admin/users - Intento de crear usuario: " + user.getUsername());
+        User currentUser = userService.getCurrentUser();
+        if (!currentUser.isAdmin()) {
+            System.out.println("[LOG] POST /api/admin/users - Acceso denegado para usuario: " + currentUser.getUsername());
+            return ResponseEntity.status(403).body("Solo el admin puede crear usuarios");
+        }
         return ResponseEntity.ok(userService.createUser(user));
     }
 
